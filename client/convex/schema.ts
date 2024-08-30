@@ -2,6 +2,13 @@ import { v } from "convex/values";
 import { defineSchema, defineTable } from "convex/server";
 
 export default defineSchema({
+  // user: defineTable({
+  //   name: v.string(),
+  //   email: v.string(),
+  //   Id: v.string(),
+  //   imageUrl: v.string(),
+  //   role: v.string(),
+  // }),
   boards: defineTable({
     title: v.string(),
     orgId: v.string(),
@@ -41,10 +48,10 @@ export default defineSchema({
     message: v.string(),
   }).index('by_org', ['orgId']),
 
-  ChatApp: defineTable({
+  chatApp: defineTable({
     orgId: v.string(),
     name: v.string(),
-    role: v.string(),
+    // status: v.string(),
     message: v.string(),
   }).index('by_org', ['orgId']),
 })

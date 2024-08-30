@@ -6,7 +6,7 @@ export const createChat = mutation({
   args: {
     orgId: v.string(),
     name: v.string(),
-    role: v.string(),
+    // status: v.string(),
     message: v.string(),
   },
   handler: async (ctx, args) => {
@@ -16,10 +16,10 @@ export const createChat = mutation({
     //     throw new Error("User not Identified")
     // }
 
-    const message = await ctx.db.insert('ChatApp', {
+    const message = await ctx.db.insert('chatApp', {
       orgId: args.orgId,
       name: args.name,
-      role: args.role,
+      // status: args.status,
       message: args.message,
     })
 
@@ -40,7 +40,7 @@ export const getAll = query({
     // }
 
     const getchat = await ctx.db
-      .query('ChatApp')
+      .query('chatApp')
       .withIndex('by_org', (q) => q.eq('orgId', args.orgId))
       .collect()
 

@@ -27,21 +27,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
+      <body className={inter.className}>
         <Suspense fallback={<Loader />}>
           <ConvexClientProvider>
             <Providers>
-              <SocketProvider>
               <Toaster />
               <ModalProvider />
               <StreamVideoProvider>
-                <body className={inter.className}>
+                <SocketProvider>
                   {children}
-                </body>
+                </SocketProvider>
               </StreamVideoProvider>
-              </SocketProvider>
             </Providers>
           </ConvexClientProvider>
         </Suspense>
+      </body>
     </html>
   )
 }

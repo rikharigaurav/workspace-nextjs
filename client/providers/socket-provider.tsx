@@ -1,4 +1,7 @@
 'use client'
+import { api } from '@/convex/_generated/api'
+import { useApiMutation } from '@/hooks/use-api-mutation'
+import { useOrganization, useUser } from '@clerk/nextjs'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 
@@ -8,7 +11,6 @@ interface SocketProviderProps {
 
 interface ISocketContext {
   sendMessage: (msg: string) => any
-  messages: string[]
 }
 
 const SocketContext = React.createContext<ISocketContext | null>(null)
@@ -21,22 +23,33 @@ export const useSocket = () => {
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket>()
-  const [messages, setMessages] = useState<string[]>([])
+  const { organization } = useOrganization()
+  const {mutate, pending} = useApiMutation(api.chatApp.createChat)
+  const { user } = useUser()
+  // const [messages, setMessages] = useState<string[]>([])
 
   const sendMessage: ISocketContext['sendMessage'] = useCallback(
     (msg) => {
       console.log('Send Message', msg)
       if (socket) {
-        socket.emit('event:message', { message: msg })
+        socket.emit('event:message', { message: msg, username: user?.username })
       }
     },
     [socket]
   )
 
+
   const onMessageRec = useCallback((msg: string) => {
     console.log('From Server Msg Rec', msg)
-    const { message } = JSON.parse(msg) as { message: string }
-    setMessages((prev) => [...prev, message])
+    const { message, username } = JSON.parse(msg) as { message: string, username: string }
+  
+    if(username !== user?.username)
+      mutate({
+        orgId: organization?.id,
+        name: username,
+        message: message,
+      })
+    // setMessages((prev) => [...prev, message])
   }, [])
 
   useEffect(() => {
@@ -53,7 +66,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   }, [onMessageRec])
 
   return (
-    <SocketContext.Provider value={{ sendMessage, messages }}>
+    <SocketContext.Provider value={{ sendMessage }}>
       {children}
     </SocketContext.Provider>
   )

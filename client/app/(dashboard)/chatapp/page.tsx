@@ -19,6 +19,7 @@ import { QuizDialog } from './_components/QuizFormat'
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import { api } from '@/convex/_generated/api'
 import { useQuery } from 'convex/react'
+import { request } from 'https'
 
 type QuizQuestion = {
   question: string
@@ -106,84 +107,28 @@ const ChatbotPage = () => {
         setQuizQuestions(response.data.message)
         setDialogOpen(true)
       } else if (functionValue === 'CreatePPT' && response.data) {
-        console.log('the file response', response)
-        console.log('the file response data pptxBlob', response.data)
-        console.log(
-          'the file response data URL',
-          JSON.stringify(response.data.jsonData)
-        )
-        // const formData = response.data.jsonData
+        console.log('the file response', response.data)
+        console.log('the file response data pptxBlob', response.data.pptxBlob)
 
-        const formData = new FormData()
-        formData.append('jsonData', JSON.stringify(response.data.jsonData))
-        for (let pair of formData.entries()) {
-          console.log('the formdata')
-          console.log(`${pair[0]}: ${pair[1]}`)
-        }
+        const pptxBlob = response.data.pptxBlob
 
-        request.open(
-          'POST',
-          'https://gen.powerpointgeneratorapi.com/v1.0/generator/create',
-          true
-        )
-        request.setRequestHeader(
-          'Authorization',
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZ2F1cmF2cmlraGFyaTM0M0BnbWFpbC5jb20iLCJuYmYiOiIxNzIwOTgzNDY0IiwiZXhwIjoiMTcyNjE2NzQ2NCJ9.zRdeVYcPpvz9iER84gs_Oaq7t2AQMU72rvKMejILlLw'
-        )
-        request.responseType = 'blob'
+        console.log('The PPTX Blob is', pptxBlob)
+        const url = URL.createObjectURL(pptxBlob)
+        console.log('the url is ', url)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'generated.pptx'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
 
-         request.onload = function () {
-           if (request.readyState === request.DONE) {
-             if (request.status === 200) {
-               console.log('Success: ', request.response)
-               var blob = new Blob([request.response], {
-                 type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-               })
-               var link = document.createElement('a')
-               link.href = window.URL.createObjectURL(blob)
-               link.download = 'generated.pptx'
-               link.click()
-             } else {
-               console.error('Error: ', request.statusText)
-             }
-           }
-         }
-
-         request.onerror = function () {
-           console.error('Network Error')
-         }
-
-         request.send(formData)
-
-        // const blob = response.data.pptxBlob
-        // const binaryString = atob(blob)
-        // const len = binaryString.length
-        // const bytes = new Uint8Array(len)
-        // for (let i = 0; i < len; i++) {
-        //   bytes[i] = binaryString.charCodeAt(i)
-        // }
-
-        // const pptxBlob = new Blob([bytes], {
-        //   type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        // })
-
-        // console.log('The PPTX Blob is', pptxBlob)
-        // const url = URL.createObjectURL(pptxBlob)
-        // console.log('the url is ', url)
-        // const link = document.createElement('a')
-        // link.href = url
-        // link.download = 'generated.pptx'
-        // document.body.appendChild(link)
-        // link.click()
-        // document.body.removeChild(link)
-        // window.URL.revokeObjectURL(url)
-
-        // addDocs({
-        //   orgId: organization?.id,
-        //   Filename: 'ChatBot_PPT',
-        //   documenturl: link.toString(),
-        //   filekey: 'ChatBot_ppt',
-        // })
+        addDocs({
+          orgId: organization?.id,
+          Filename: 'ChatBot_PPT',
+          documenturl: link.toString(),
+          filekey: 'ChatBot_ppt',
+        })
       }
     } catch (error) {
       console.error('Error:', error)
@@ -223,8 +168,8 @@ const ChatbotPage = () => {
   }
 
   return (
-    <div className='flex flex-col gap-4 w-full h-full'>
-      <div className='grid grid-cols-2 gap-4 p-2'>
+    <div className='flex flex-col gap-2 w-full h-full'>
+      <div className='grid grid-cols-2 gap-4 p-1'>
         <Select onValueChange={handleFunctionSelect} value={functionValue}>
           <SelectTrigger className='w-full'>
             <SelectValue placeholder='Select Function' />
@@ -248,7 +193,7 @@ const ChatbotPage = () => {
               placeholder={
                 selectedNamespaces.length > 0
                   ? selectedNamespaces.join(', ')
-                  : 'Select Namespaces' 
+                  : 'Select Namespaces'
               }
             />
           </SelectTrigger>
@@ -267,7 +212,7 @@ const ChatbotPage = () => {
         </Select>
       </div>
       <div className='flex flex-col items-center justify-center w-full '>
-        <div className='overflow-y-scroll max-h-[650px] min-w-full p-2'>
+        <div className='overflow-y-scroll max-h-[620px] min-w-full min-h-[620px] p-2 border border-black rounded-md'>
           {renderMessages()}
         </div>
         <div

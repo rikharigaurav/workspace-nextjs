@@ -100,6 +100,7 @@ export async function getContextForFunction(query: string, fileKey: string[]) {
         }
 
         const docs = matches.map((match) => (match.metadata as Metadata).text)
+        console.log("the docs is", docs)
         return docs.join(', ')
       })
     )

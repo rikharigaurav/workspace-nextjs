@@ -35,11 +35,11 @@ class SocketService {
     io.on('connect', (socket) => {
       console.log('Client connected: ', socket.id)
 
-      socket.on('event:message', async ({ message }: { message: string }) => {
+      socket.on('event:message', async ({ message, username }: { message: string, username: string }) => {
         console.log('Message: ', message)
 
         //publish this message to redis
-        await pub.publish('MESSAGES', JSON.stringify({ message }))
+        await pub.publish('MESSAGES', JSON.stringify({ message, username }))
       })
     })
 
@@ -47,8 +47,6 @@ class SocketService {
       if (channel === 'MESSAGES') {
         console.log('new message from redis', message)
         io.emit('message', message)
-        // await produceMessage(message)
-        console.log('Message produced to kafka broker')
       }
     })
   }

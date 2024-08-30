@@ -33,6 +33,7 @@ import CalendarPage from '@/app/calendar/page'
 import { CalendarRange, MessageSquare } from 'lucide-react'
 import ChatApp from '@/app/chatApp/page'
 import ChatbotPage from '@/app/(dashboard)/chatapp/page'
+import { toast } from 'sonner'
 
 interface centerToolsProps {
   boardId: string
@@ -53,15 +54,27 @@ const CenterTools = ({ boardId }: centerToolsProps) => {
         }
       })
     }
+    const formattedData = Array.isArray(data)
+      ? data
+          .map((item) => item.toString().trim())
+          .filter((item) => item.length > 0)
+      : []
 
-    console.log('sending data to api end point', data)
-    //   const response = await axios.post('/api/updateDB', {
-    //     boardname: board?.title,
-    //     value: data,
-    //   })
+      console.log('formattedData', formattedData)
+    // const baordString = data.join(', ')
+    // console.log("boardString", baordString)
+    // console.log('sending data to api end point', data)
+    await axios
+      .post('/api/updateDB', {
+        boardname: board?.title,
+        value: formattedData,
+      })
+      .then(() => {
+        toast.success('Vectors Updated')
+      })
   }
   return (
-    <div className='shadow-md justify-center flex items-center gap-x-2'>
+    <div className='shadow-md justify-center flex items-center gap-x-2 pl-20'>
       <Hint label='Push to DataBase' side='bottom' sideOffset={10}>
         <Button onClick={updateDB} size={'lg'}>
           Update

@@ -226,48 +226,42 @@ type ResponseData = {
       }
       console.log('The jsonData', JSON.stringify(jsonData, null, 2))
 
-      // const formData = new FormData()
-      // formData.append('jsonData', JSON.stringify(jsonData))
-      // console.log("The form data is ", formData)
-    //   // Send the request
-    //   const response = await axios.post(
-    //   'https://gen.powerpointgeneratorapi.com/v1.0/generator/create',
-    //   formData,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${process.env.PPT_TOKEN_BEARER}`,
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //     responseType: 'blob',
-    //   }
-    // )
+      const formData = new FormData()
+      formData.append('jsonData', JSON.stringify(jsonData))
+      console.log("The form data is ", formData)
+      // Send the request
+      const response = await axios.post(
+      'https://gen.powerpointgeneratorapi.com/v1.0/generator/create',
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PPT_TOKEN_BEARER}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        responseType: 'blob',
+      }
+    )
 
-    // const pptxBlob = new Blob([response.data], {
-    //   type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    // })
+    const pptxBlob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    })
 
     // const arrayBuffer = await pptxBlob.arrayBuffer()
     // const base64String = btoa(
     //   String.fromCharCode(...new Uint8Array(arrayBuffer))
     // )
 
-    // console.log('hte PPTBLOb data is ', pptxBlob)
-    // console.log("the arrayBuffer ", arrayBuffer)
     // // console.log("the response data being sent is ", response.data)
 
-    
-
-    // await fetchMutation(api.chatBot.createChat, {
-    //   orgId: organization,
-    //   message: 'PPT is Ready',
-    //   userRole: 'server',
-    // })
-
-    // console.log("The pptx Blov ", pptxBlob)
+    await fetchMutation(api.chatBot.createChat, {
+      orgId: organization,
+      message: 'PPT is Ready',
+      userRole: 'server',
+    })
 
     return NextResponse.json({
       message: 'PPT created successfully',
-      jsonData: jsonData,
+      pptxBlob: URL.createObjectURL(pptxBlob),
     })
     } catch(error: any) {
           if (error.response) {
@@ -358,33 +352,59 @@ type ResponseData = {
         })
       
     } else {
+      const zodSchema = z.array(
+        z.object({
+          question: z.string().describe('question'),
+          answer: z.string().describe('answer to the question')
+        })
+      )
 
-      const context = await getContext(message, value)
+      const parser = StructuredOutputParser.fromZodSchema(zodSchema)
+
+      const context = await getContextForFunction(message, value)
+      const formatInstructions = parser.getFormatInstructions()
       console.log('The Context of file is ', context)
 
-      const prompt = `Compose a prompt for an LLM model that takes a provided file as input, extracts relevant context from it, and uses that context to generate a response. If a file is not provided, the prompt should instruct the model to search for relevant information on its own. In either case, if the model is unable to find an answer, it should apologize for not providing an answer and conclude its response. Please generate a prompt that meets these specifications. If a file is provided, use the text within it to inform your response. If no file is provided, draw upon your internal knowledge database to search for relevant information. If, after searching, you are unable to find a suitable answer, please acknowledge this and apologize for not being able to provide an answer
+      const prompt = `
+      Consider the context provided from files and after thoughro reading of the context and the question. provide me the answer.
+
+      make sure the output is in the form of an object containing question and answer
+        Context:
           ${context}
 
-          ${message}
+          Question :
+          {question}
+
+          {format_Instructions}
           `
 
       console.log('The message is ', message)
-      const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
-        ['system', prompt],
-        new MessagesPlaceholder('chat_history'),
-        ['human', message],
-      ])
+     const chain = RunnableSequence.from([
+       ChatPromptTemplate.fromTemplate(prompt),
+       llm,
+       parser,
+     ])
 
-      const result = await llm.invoke(prompt)
+     console.log(
+       'The parser format instructions:',
+       parser.getFormatInstructions()
+     )
+     console.log('The chain created:', chain)
 
-      console.log("the resutl", result.content)
+     const stream = await chain.invoke({
+       question: message,
+       format_Instructions: parser.getFormatInstructions(),
+     })
+
+     console.log("the result is ", stream[0].answer)
+
 
     await fetchMutation(api.chatBot.createChat, {
       orgId: organization,
-      message: JSON.stringify(result.content),
+      message: stream[0].answer,
       userRole: 'server',
     })
-    // 
+
 
     return new Response('', {
       headers: {

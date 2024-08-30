@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Plus } from 'lucide-react'
+import { Label } from '@/components/ui/label'
 
 export const OrgMembersParams = {
   memberships: {
@@ -71,23 +72,23 @@ export const InviteMember = () => {
       <DialogTrigger>
         <Plus /> Invite
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className=' p-4 gap-x-2'>
+        <DialogHeader className='gap-x-3'>
           <DialogTitle>Add People to Organization</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className='flex flex-col gap-y-2'>
             <form onSubmit={onSubmit}>
-              <input
+              <Input
                 name='email'
                 type='text'
                 placeholder='Email address'
                 value={emailAddress}
                 onChange={(e) => setEmailAddress(e.target.value)}
               />
-              <label>Role</label>
+              <Label>Role</Label>
               <SelectRole fieldName={'role'} />
-              <button type='submit' disabled={disabled}>
+              <Button type='submit' disabled={disabled} size='sm'>
                 Invite
-              </button>
+              </Button>
             </form>
           </DialogDescription>
         </DialogHeader>
@@ -135,7 +136,7 @@ const SelectRole = (props: SelectRoleProps) => {
       defaultValue={defaultRole}
     >
       {fetchedRoles?.map((roleKey) => (
-        <option key={roleKey} value={roleKey}>
+        <option className='p-2 m-2' key={roleKey} value={roleKey}>
           {roleKey}
         </option>
       ))}

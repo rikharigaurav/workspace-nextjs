@@ -112,52 +112,67 @@ async function prepareDocument(page: PDFPage) {
 
 
 // Code for loading text to pinecone
-export async function loadCanvasToPinecone(boardname: string, value: any) {
-  const BoardNamespaceName = "BOARD/" + boardname
-  try {console.log('loading boardID and data ', BoardNamespaceName, value)
+export async function loadCanvasToPinecone(
+  boardname: string,
+  values: string[]
+) {
+  const BoardNamespaceName = `BOARD/${boardname}`
+  try {
+    console.log('Loading boardID and data:', BoardNamespaceName, values)
 
-  const vectors = await Promise.all(value.map(embedText))
-  console.log(' Vector of the text : -> ', vectors)
+    // Embed texts and prepare records
+    const vectors = await Promise.all(
+      values.map((text) => embedText(text, boardname))
+    )
+    console.log('Vectors of the text:', vectors)
 
-  // 4. Upload to Pinecone
-  const namespace = pineconeIndex.namespace(BoardNamespaceName)
-  console.log('namesapce: ', BoardNamespaceName)
+    // Upload to Pinecone
+    const namespace = pineconeIndex.namespace(BoardNamespaceName)
+    console.log('Namespace:', namespace)
 
-  
-  const vex = await namespace.upsert(vectors)
-  console.log('vectors uploaded to pinecone: ')
+    const response = await namespace.upsert(vectors)
+    console.log('Vectors uploaded to Pinecone:', response)
 
-  console.log('Successfully uploaded vectors to Pinecone')
+    console.log('Successfully uploaded vectors to Pinecone')
   } catch (error) {
-    console.error('Error in loadS3IntoPinecone:', error)
+    console.error('Error in loadCanvasToPinecone:', error)
     throw error
   }
 }
 
-
+// Function to embed a single text and prepare Pinecone record
 async function embedText(text: string, boardname: string) {
   try {
+    console.log('Text being processed:', text)
+
+    // Get embeddings
     const embeddings = await getEmbeddings(text)
+    console.log('Embeddings:', embeddings)
+
+    // Create hash ID
     const hash = md5(text)
+    console.log('Hash:', hash)
 
-    // console.log({
-    //   id: hash,
-    //   values: embeddings,
-    //   metadata: {
-    //     text: "board",
-    //   },
-    // } as PineconeRecord)
-
-    return {
+    // Prepare Pinecone record
+    const record: PineconeRecord = {
       id: hash,
       values: embeddings,
       metadata: {
-        text: boardname,
+        text: truncateStringByBytesforBoard(text, 3600), // Ensure text fits within byte limit
+        boardname: boardname,
       },
-    } as PineconeRecord
+    }
+    console.log('Pinecone Record:', record)
 
+    return record
   } catch (error) {
     console.error('Error embedding document:', error)
     throw error
   }
+}
+
+// Function to truncate text by bytes to fit within the limit
+export const truncateStringByBytesforBoard = (str: string, bytes: number) => {
+  const enc = new TextEncoder()
+  return new TextDecoder('utf-8').decode(enc.encode(str).slice(0, bytes))
 }
