@@ -33,11 +33,11 @@ export default function RootLayout({
             <Providers>
               <Toaster />
               <ModalProvider />
-              <StreamVideoProvider>
+              {/* <StreamVideoProvider> */}
                 <SocketProvider>
                   {children}
                 </SocketProvider>
-              </StreamVideoProvider>
+              {/* </StreamVideoProvider> */}
             </Providers>
           </ConvexClientProvider>
         </Suspense>
