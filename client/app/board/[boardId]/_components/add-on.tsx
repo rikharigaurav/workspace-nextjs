@@ -32,7 +32,7 @@ import {
 import CalendarPage from '@/app/calendar/page'
 import { CalendarRange, MessageSquare } from 'lucide-react'
 import ChatApp from '@/app/chatApp/page'
-import ChatbotPage from '@/app/(dashboard)/chatapp/page'
+import ChatbotPage from '@/app/dashboard/chatapp/page'
 import { toast } from 'sonner'
 
 interface centerToolsProps {
@@ -60,7 +60,7 @@ const CenterTools = ({ boardId }: centerToolsProps) => {
           .filter((item) => item.length > 0)
       : []
 
-      console.log('formattedData', formattedData)
+    console.log('formattedData', formattedData)
     // const baordString = data.join(', ')
     // console.log("boardString", baordString)
     // console.log('sending data to api end point', data)

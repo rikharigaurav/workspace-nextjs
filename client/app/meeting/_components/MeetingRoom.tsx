@@ -44,7 +44,7 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer'
 import CalendarPage from '@/app/calendar/page'
-import ChatbotPage from '@/app/(dashboard)/chatapp/page'
+import ChatbotPage from '@/app/dashboard/chatapp/page'
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right'
 
