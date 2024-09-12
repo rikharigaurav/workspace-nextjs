@@ -169,9 +169,6 @@ const DashboardPage = () => {
           <Loader2 className='h-16 w-16 text-white animate-spin' />
         </div>
       )}
-      {!organization ? (
-        <EmptyOrg />
-      ) : (
         <section className='flex flex-wrap justify-center items-center h-full w-full gap-10'>
           <HomeCard
             img='/icons/add-meeting.svg'
@@ -192,7 +189,6 @@ const DashboardPage = () => {
             handleClick={() => setIsDocumentationModalOpen(true)}
           />
         </section>
-      )}
       <Dialog
         open={isDocumentationModalOpen}
         onOpenChange={setIsDocumentationModalOpen}

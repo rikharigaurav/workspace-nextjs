@@ -43,7 +43,7 @@ import {
 import { InviteButton } from './invite-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ChatbotPage from '../chatapp/page'
-import CalendarPage from '@/app/calendar/page'
+import CalendarPage from '@/app//calendar/page'
 import ChatApp from '@/app/chatApp/page'
 import { InviteMember } from './inviteMember'
 
@@ -63,7 +63,7 @@ export const OrgSidebar = () => {
   >(undefined)
 
   return (
-    <div className='hidden lg:flex flex-col space-y-6 w-[270px] pl-5 pt-5 bg-white shadow-lg '>
+    <div className='hidden lg:flex flex-col space-y-6 w-[270px] pt-5 bg-white shadow-lg justify-start'>
       <div className='flex items-center gap-x-2'>
         <div className='flex-1 flex justify-center items-center gap-x-4'>
           <UserButton />

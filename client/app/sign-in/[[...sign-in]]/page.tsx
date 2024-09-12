@@ -1,5 +1,14 @@
-import { SignIn } from '@clerk/nextjs'
+'use client'
+import { SignIn, useOrganization } from '@clerk/nextjs'
 
 export default function Page() {
-  return <SignIn />
+  const { organization } = useOrganization()
+
+  return (
+    <div className='flex justify-center items-center'>
+      <SignIn
+        signUpUrl={!organization ? '/dashboard/emptyorgg' : '/dashboard'}
+      />
+    </div>
+  )
 }

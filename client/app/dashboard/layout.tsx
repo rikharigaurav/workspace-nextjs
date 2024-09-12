@@ -9,13 +9,12 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <main className='h-full overflow-hidden '>
-      <Sidebar />
-      <div className='pl-[60px] h-full'>
+    <main className='h-full overflow-hidden'>
+      <Navbar />
+      <div className='pl-[10px] h-full'>
         <div className='flex gap-x-3 h-full'>
           <OrgSidebar />
-          <div className='h-full flex-1'>
-            <Navbar />
+            <div className='h-full flex-1'>
             <div className='h-full w-full bg-slate-200'>
             {children}
             </div>

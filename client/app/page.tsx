@@ -1,5 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button'
+import { SignInButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,8 +22,9 @@ export default function Component() {
         </Link>
         <div className='ml-auto flex items-center gap-4 sm:gap-6 md:gap-8'>
           <Button
-          onClick={onclick}
+            onClick={onclick}
             className='inline-flex h-8 items-center justify-center rounded-md bg-white px-4 text-sm font-medium text-black shadow transition-colors hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'
+            
           >
             Sign In
           </Button>
