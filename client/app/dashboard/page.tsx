@@ -29,7 +29,9 @@ const DashboardPage = () => {
   const [callDetail, setCallDetail] = useState<Call>()
   const client = useStreamVideoClient()
   const { user } = useUser()
-  const { mutate: mutateDocs, pending: PendingDocs } = useApiMutation(api.document.Createdoc)
+  const { mutate: mutateDocs, pending: PendingDocs } = useApiMutation(
+    api.document.Createdoc
+  )
   const { mutate, pending } = useApiMutation(api.board.create)
   const [isDocumentationModalOpen, setIsDocumentationModalOpen] =
     useState(false)
@@ -48,9 +50,7 @@ const DashboardPage = () => {
         toast.success('Board Created')
         router.push(`/board/${id}`)
       })
-      .catch(() =>  
-        toast.error('Failed to create Board')
-      )
+      .catch(() => toast.error('Failed to create Board'))
       .finally(() => setLoading(false))
   }
 
@@ -60,7 +60,7 @@ const DashboardPage = () => {
     setLoading(true)
     try {
       if (!values.dateTime) {
-        toast.error('Please select a date and time' )
+        toast.error('Please select a date and time')
         return
       }
       const id = crypto.randomUUID()
@@ -81,7 +81,7 @@ const DashboardPage = () => {
       if (!values.description) {
         router.push(`/meeting/${call.id}`)
       }
-      toast.success( 'Meeting Created')
+      toast.success('Meeting Created')
     } catch (error) {
       console.error(error)
       toast.error('Failed to create Meeting')
@@ -124,12 +124,12 @@ const DashboardPage = () => {
         const url = await getS3Url(data.file_key)
 
         const payload = {
-            orgId: organization?.id,
-            Filename: file.name,
-            documenturl: url,
-            filekey: data.file_key
+          orgId: organization?.id,
+          Filename: file.name,
+          documenturl: url,
+          filekey: data.file_key,
         }
-        console.log("Payload to be sent:", payload)
+        console.log('Payload to be sent:', payload)
         await mutateDocs(payload)
 
         if (!data?.file_key || !data?.file_name) {
@@ -149,10 +149,9 @@ const DashboardPage = () => {
           },
         })
         // console.log("pendidn docs", PendingDocs)
-        if(!PendingDocs){
-            setUploading(false)
-            setLoading(false)
-
+        if (!PendingDocs) {
+          setUploading(false)
+          setLoading(false)
         }
       } catch (error) {
         console.log(error)
@@ -169,26 +168,26 @@ const DashboardPage = () => {
           <Loader2 className='h-16 w-16 text-white animate-spin' />
         </div>
       )}
-        <section className='flex flex-wrap justify-center items-center h-full w-full gap-10'>
-          <HomeCard
-            img='/icons/add-meeting.svg'
-            title='New Meeting'
-            description='Start an instant meeting'
-            handleClick={createMeeting}
-          />
-          <HomeCard
-            img='/icons/join-meeting.svg'
-            title='Create Board'
-            description='Canvas to organize'
-            handleClick={createBoard}
-          />
-          <HomeCard
-            img='/icons/schedule.svg'
-            title='Documentation'
-            description='Add Your Docs'
-            handleClick={() => setIsDocumentationModalOpen(true)}
-          />
-        </section>
+      <section className='flex flex-wrap justify-center items-center h-full w-full gap-10'>
+        <HomeCard
+          img='/icons/add-meeting.svg'
+          title='New Meeting'
+          description='Start an instant meeting'
+          handleClick={createMeeting}
+        />
+        <HomeCard
+          img='/icons/join-meeting.svg'
+          title='Create Board'
+          description='Canvas to organize'
+          handleClick={createBoard}
+        />
+        <HomeCard
+          img='/icons/schedule.svg'
+          title='Documentation'
+          description='Add Your Docs'
+          handleClick={() => setIsDocumentationModalOpen(true)}
+        />
+      </section>
       <Dialog
         open={isDocumentationModalOpen}
         onOpenChange={setIsDocumentationModalOpen}
@@ -204,9 +203,7 @@ const DashboardPage = () => {
             {uploading || pending ? (
               <>
                 <Loader2 className='h-10 w-10 text-blue-500 animate-spin' />
-                <p className='mt-2 text-sm text-slate-400'>
-                  Uploading Docs...
-                </p>
+                <p className='mt-2 text-sm text-slate-400'>Uploading Docs...</p>
               </>
             ) : (
               <>
