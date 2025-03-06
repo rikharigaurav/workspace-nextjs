@@ -131,7 +131,7 @@ export const OrgSidebar = () => {
           variant={favorites ? 'ghost' : 'secondary'}
           size='lg'
           className='font-normal justify-start px-2 w-full text-black hover:bg-gray-200'
-          onClick={() => router.push('/boardDashboard')}
+          onClick={() => router.push('/dashboard/boardDashboard')}
         >
           <SquarePen className='h-4 w-4 mr-2' />
           Boards
@@ -141,7 +141,7 @@ export const OrgSidebar = () => {
           variant={favorites ? 'ghost' : 'secondary'}
           size='lg'
           className='font-normal justify-start px-2 w-full text-black hover:bg-gray-200'
-          onClick={() => router.push('/meetingdashboard')}
+          onClick={() => router.push('/dashboard/meetingdashboard')}
         >
           <Presentation className='h-4 w-4 mr-2' />
           Meetings
@@ -150,7 +150,7 @@ export const OrgSidebar = () => {
           variant={favorites ? 'ghost' : 'secondary'}
           size='lg'
           className='font-normal justify-start px-2 w-full text-black hover:bg-gray-200'
-          onClick={() => router.push('/documentDashboard')}
+          onClick={() => router.push('/dashboard/documentDashboard')}
         >
           <FileStack className='h-4 w-4 mr-2' />
           Documents

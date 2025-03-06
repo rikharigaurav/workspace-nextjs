@@ -1,5 +1,4 @@
 import { loadS3IntoPinecone } from '@/components/pinecone'
-// import { cu } from '@clerk/nextjs'
 import { NextResponse } from 'next/server'
 
 // /api/create-chat

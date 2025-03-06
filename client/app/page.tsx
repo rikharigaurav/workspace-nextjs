@@ -44,12 +44,12 @@ export default function Component() {
               <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl'>
                 A Personalized, AI-Integrated Platform for Teamwork
               </h2>
-              <p className='text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
+              {/* <p className='text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
                 AI Space brings everything you need for seamless collaboration
                 into one place, similar to Microsoft Teams but enhanced with AI
                 features for smarter scheduling, data access, and task
                 management.
-              </p>
+              </p> */}
             </div>
             <div className='flex flex-col gap-2 min-[400px]:flex-row justify-center'>
               <Link
